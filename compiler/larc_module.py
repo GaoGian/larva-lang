@@ -1128,7 +1128,9 @@ class Module:
         if self.name == "__builtins":
             assert builtins_module is None
             #内建模块需要做一些必要的检查
-            if "String" not in self.cls_map: #必须有String类
+            if "Any" not in self.intf_map or self.intf_map["Any"].gtp_name_list: #必须有Any接口
+                larc_common.exit("内建模块缺少接口'Any'")
+            if "String" not in self.cls_map or self.cls_map["String"].gtp_name_list: #必须有String类
                 larc_common.exit("内建模块缺少类'String'")
             if "ArrayIter" not in self.cls_map or len(self.cls_map["ArrayIter"].gtp_name_list) != 1: #必须有ArrayIter<E>
                 larc_common.exit("内建模块缺少泛型类'ArrayIter<E>'")

@@ -1,0 +1,15 @@
+package LARVA_NATIVE
+
+/*
+larva反射接口，所有被编译的larva class都要实现这个接口，由编译器保证
+native class的对应方法的代码也由编译器生成，lar_native代码中不需要自己实现
+reflect模块中传入的Any对象若不是larva基础类型或对象，则视为非法输入，会抛出NotLarvaObjectError
+基础类型虽然没有实现这个方法，但在生成reflect.Value时会封装成对应对象，具体参考reflect的实现
+这个接口虽然是reflect相关，不过被内部很多地方使用，所以放在__builtins
+*/
+type lar_reflect_intf interface {
+    lar_reflect_type_str() *lar_cls_@<<String>> //返回类型的字符串表示
+    lar_reflect_zero_value() lar_intf_@<<Any>> //返回此类型的zero_value
+
+    lar_reflect_value() lar_intf_@<<Any>> //返回这个lri的value（对基础类型需要解开值，对象则直接返回自身）
+}

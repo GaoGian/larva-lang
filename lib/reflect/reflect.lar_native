@@ -3,53 +3,91 @@ package LARVA_NATIVE
 //type lar_reflect_intf interface
 //lar_reflect_intf的定义放在__builtin的util.lar_native中，因为比较基础，runtime和__builtins可能需要
 
-var (
-    lar_reflect_type_name_nil_intf  = lar_str_from_go_str("<nil interface>")
-    lar_reflect_type_name_bool      = lar_str_from_go_str("bool")
-    lar_reflect_type_name_schar     = lar_str_from_go_str("schar")
-    lar_reflect_type_name_char      = lar_str_from_go_str("char")
-    lar_reflect_type_name_short     = lar_str_from_go_str("short")
-    lar_reflect_type_name_ushort    = lar_str_from_go_str("ushort")
-    lar_reflect_type_name_int       = lar_str_from_go_str("int")
-    lar_reflect_type_name_uint      = lar_str_from_go_str("uint")
-    lar_reflect_type_name_long      = lar_str_from_go_str("long")
-    lar_reflect_type_name_ulong     = lar_str_from_go_str("ulong")
-    lar_reflect_type_name_float     = lar_str_from_go_str("float")
-    lar_reflect_type_name_double    = lar_str_from_go_str("double")
-)
+//Type和Value其实都是对lri的封装，分别使用lri中的一部分接口，区别在于Type的lri是zero_value，避免引用大对象
+
+//Type -----------------------------------------------------------------
+
+type lar_cls_@<<Type>> struct {
+    lri lar_reflect_intf
+}
+
+func lar_new_obj_lar_cls_@<<Type>>(a lar_intf_@<<:Any>>) *lar_cls_@<<Type>> {
+    return &lar_cls_@<<Type>>{
+        lri: lar_reflect_gen_lri(a, true),
+    }
+}
+
+func (this *lar_cls_@<<Type>>) lar_method_str() *lar_cls_@<<:String>> {
+    return this.lri.lar_reflect_type_str()
+}
+
+func (this *lar_cls_@<<Type>>) lar_method_zero_value() lar_intf_@<<:Any>> {
+    return this.lri.lar_reflect_zero_value()
+}
+
+//Value --------------------------------------------------------------------
+
+type lar_cls_@<<Value>> struct {
+    lri lar_reflect_intf
+}
+
+func lar_new_obj_lar_cls_@<<Value>>(a lar_intf_@<<:Any>>) *lar_cls_@<<Value>> {
+    return &lar_cls_@<<Value>>{
+        lri: lar_reflect_gen_lri(a, false),
+    }
+}
+
+func (this *lar_cls_@<<Value>>) lar_method_type() *lar_cls_@<<Type>> {
+    //不通过new obj迂回，直接构造比较快
+    return &lar_cls_@<<Type>>{
+        lri: lar_reflect_gen_lri(this.lri.lar_reflect_zero_value(), false),
+    }
+}
+
+func (this *lar_cls_@<<Value>>) lar_method_value() lar_intf_@<<:Any>> {
+    return this.lri.lar_reflect_value()
+}
+
+//-----------------------------------------------------------------------------
 
 var lar_reflect_not_lar_obj_err = lar_new_obj_lar_cls_@<<NotLarvaObjectError>>()
 
-func lar_func_@<<type_name>>(a lar_intf_@<<:Any>>) *lar_cls_@<<:String>> {
-    switch a.(type) {
+func lar_reflect_gen_lri(a lar_intf_@<<:Any>>, need_zero_value bool) lar_reflect_intf {
+    //基础类型占空间固定，不用考虑need_zero_value
+    switch v := a.(type) {
     case nil:
-        return lar_reflect_type_name_nil_intf
+        return &lar_reflect_lri_nil_intf{}
     case bool:
-        return lar_reflect_type_name_bool
+        return &lar_reflect_lri_bool{v: v}
     case int8:
-        return lar_reflect_type_name_schar
+        return &lar_reflect_lri_schar{v: v}
     case uint8:
-        return lar_reflect_type_name_char
+        return &lar_reflect_lri_char{v: v}
     case int16:
-        return lar_reflect_type_name_short
+        return &lar_reflect_lri_short{v: v}
     case uint16:
-        return lar_reflect_type_name_ushort
+        return &lar_reflect_lri_ushort{v: v}
     case int32:
-        return lar_reflect_type_name_int
+        return &lar_reflect_lri_int{v: v}
     case uint32:
-        return lar_reflect_type_name_uint
+        return &lar_reflect_lri_uint{v: v}
     case int64:
-        return lar_reflect_type_name_long
+        return &lar_reflect_lri_long{v: v}
     case uint64:
-        return lar_reflect_type_name_ulong
+        return &lar_reflect_lri_ulong{v: v}
     case float32:
-        return lar_reflect_type_name_float
+        return &lar_reflect_lri_float{v: v}
     case float64:
-        return lar_reflect_type_name_double
+        return &lar_reflect_lri_double{v: v}
     }
+
+    //对象需要根据need_zero_value进行处理
     lri, ok := a.(lar_reflect_intf)
     if !ok {
         lar_func_@<<:throw>>(lar_reflect_not_lar_obj_err)
     }
-    return lri.lar_reflect_type_name()
+    if need_zero_value {
+        return lri.lar_reflect_zero_value().(lar_reflect_intf) //这里肯定能转成功，不需要判断了
+    }
+    return lri
 }

@@ -54,7 +54,7 @@ func lar_exc_create_catched_throwable(t lar_intf_@<<Throwable>>, skip int) *lar_
         t_type_name := "Throwed"
         lri, ok := t.(lar_reflect_intf)
         if ok {
-            t_type_name = lar_str_to_go_str(lri.lar_reflect_type_name())
+            t_type_name = lar_str_to_go_str(lri.lar_reflect_type_str())
         }
         tb_line_list = append(tb_line_list, t_type_name + ": " + lar_str_to_go_str(t.lar_method_str()))
     }
@@ -159,7 +159,7 @@ func (this *lar_gcls_inst_@<<Catched>>_1_lar_intf_@<<Throwable>>) lar_go_method_
     t_type_name := "Throwed"
     lri, ok := this.m_t.(lar_reflect_intf)
     if ok {
-        t_type_name = lar_str_to_go_str(lri.lar_reflect_type_name())
+        t_type_name = lar_str_to_go_str(lri.lar_reflect_type_str())
     }
     return errors.New("[Larva throwed]" + t_type_name + ": " + lar_str_to_go_str(this.m_t.lar_method_str()))
 }

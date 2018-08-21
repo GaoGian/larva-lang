@@ -216,5 +216,5 @@ func lar_go_func_any_repr_to_go_str(a lar_intf_@<<Any>>) string {
     }
 
     //nil_repr和repr都没定义，输出对象信息即可
-    return fmt.Sprintf("<%s object at 0x%X>", lar_str_to_go_str(lri.lar_reflect_type_name()), p)
+    return fmt.Sprintf("<%s object at 0x%X>", lar_str_to_go_str(lri.lar_reflect_type_str()), p)
 }

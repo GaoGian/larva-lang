@@ -124,17 +124,19 @@ def _gen_coi_name(coi):
             coi_name += "_%s" % _gen_type_name_code_without_star(tp)
     return coi_name
 
+_BASE_TYPE_NAME_MAP = {"bool": "bool",
+                       "schar": "int8", "char": "uint8",
+                       "short": "int16", "ushort": "uint16",
+                       "int": "int32", "uint": "uint32",
+                       "long": "int64", "ulong": "uint64",
+                       "float": "float32", "double": "float64"}
+
 def _gen_non_array_type_name(tp):
     assert not (tp.is_array or tp.is_nil or tp.is_void or tp.is_literal_int)
     if tp.is_obj_type:
         return _gen_coi_name(tp.get_coi())
     assert tp.token.is_reserved
-    return {"bool" : "bool",
-            "schar" : "int8", "char" : "uint8",
-            "short" : "int16", "ushort" : "uint16",
-            "int" : "int32", "uint" : "uint32",
-            "long" : "int64", "ulong" : "uint64",
-            "float" : "float32", "double" : "float64"}[tp.name]
+    return _BASE_TYPE_NAME_MAP[tp.name]
 
 def _gen_arr_tp_name(elem_tp_name, dim_count):
     return "lar_arr_%s_%d" % (elem_tp_name, dim_count)
@@ -633,9 +635,13 @@ def _output_module():
                         code += "%s = %s" % (_gen_gv_name(gv), _gen_expr_code(gv.expr))
 
         def output_reflect_method(code):
-            code += "var lar_reflect_type_name_%s = lar_str_from_go_str(%s)" % (lar_cls_name, _gen_str_literal(str(cls)))
-            with code.new_blk("func (this *%s) lar_reflect_type_name() %s" % (lar_cls_name, _gen_type_name_code(larc_type.STR_TYPE))):
-                code += "return lar_reflect_type_name_%s" % lar_cls_name
+            code += "var lar_reflect_type_str_%s = lar_str_from_go_str(%s)" % (lar_cls_name, _gen_str_literal(str(cls)))
+            with code.new_blk("func (this *%s) lar_reflect_type_str() %s" % (lar_cls_name, _gen_type_name_code(larc_type.STR_TYPE))):
+                code += "return lar_reflect_type_str_%s" % lar_cls_name
+            with code.new_blk("func (this *%s) lar_reflect_zero_value() %s" % (lar_cls_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                code += "return (*%s)(nil)" % lar_cls_name
+            with code.new_blk("func (this *%s) lar_reflect_value() %s" % (lar_cls_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                code += "return this"
         for cls in [i for i in module.cls_map.itervalues() if not i.gtp_name_list] + list(module.gcls_inst_map.itervalues()):
             lar_cls_name = _gen_coi_name(cls)
             output_reflect_method(code)
@@ -752,6 +758,8 @@ def _output_util():
                 code += "sl[1] = la.sub_arr_repr()"
                 code += 'return lar_str_from_go_str(strings.Join(sl, ""))'
             with code.new_blk("func (la *%s) sub_arr_repr() string" % arr_tp_name):
+                with code.new_blk("if la == nil"):
+                    code += 'return "<nil>"'
                 if tp == larc_type.CHAR_TYPE and dim_count == 1:
                     code += 'return fmt.Sprintf("%q", string(la.arr))'
                 else:
@@ -779,9 +787,13 @@ def _output_util():
             with code.new_blk("func (la *%s) lar_method_copy_from(src *%s) int64" % (arr_tp_name, arr_tp_name)):
                 code += "return int64(copy(la.arr, src.arr))"
             #输出数组的反射接口
-            code += "var lar_reflect_type_name_%s = lar_str_from_go_str(%s)" % (arr_tp_name, _gen_str_literal(str(tp) + "[]" * dim_count))
-            with code.new_blk("func (la *%s) lar_reflect_type_name() %s" % (arr_tp_name, _gen_type_name_code(larc_type.STR_TYPE))):
-                code += "return lar_reflect_type_name_%s" % arr_tp_name
+            code += "var lar_reflect_type_str_%s = lar_str_from_go_str(%s)" % (arr_tp_name, _gen_str_literal(str(tp) + "[]" * dim_count))
+            with code.new_blk("func (la *%s) lar_reflect_type_str() %s" % (arr_tp_name, _gen_type_name_code(larc_type.STR_TYPE))):
+                code += "return lar_reflect_type_str_%s" % arr_tp_name
+            with code.new_blk("func (la *%s) lar_reflect_zero_value() %s" % (arr_tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                code += "return (*%s)(nil)" % arr_tp_name
+            with code.new_blk("func (la *%s) lar_reflect_value() %s" % (arr_tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                code += "return la"
             #new数组的函数
             for new_dim_count in xrange(1, dim_count + 1):
                 new_arr_func_name = _gen_new_arr_func_name_by_tp_name(tp_name, dim_count, new_dim_count)
@@ -818,6 +830,22 @@ def _output_util():
         with code.new_blk("var lar_util_native_file_name_map = map[string]string"):
             for out_nfn, in_nfn in _native_file_name_map.iteritems():
                 code += "%s: %s," % (_gen_str_literal(out_nfn), _gen_str_literal(in_nfn))
+
+        #基础类型（除nil interface外）的lri
+        for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():
+            with code.new_blk("type lar_reflect_lri_%s struct" % tp_name):
+                code += "lar_reflect_lri_base"
+                code += "v %s" % go_tp_name
+            code += ""
+            code += 'var lar_reflect_type_str_%s = lar_str_from_go_str("%s")' % (tp_name, tp_name)
+            with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_type_str() %s" % (tp_name, _gen_type_name_code(larc_type.STR_TYPE))):
+                code += "return lar_reflect_type_str_%s" % tp_name
+            with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_zero_value() %s" %
+                              (tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                code += "return %s(%s)" % (go_tp_name, "false" if tp_name == "bool" else "0")
+            with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_value() %s" %
+                              (tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                code += "return this.v"
 
 def _make_prog():
     if platform.system() in ("Darwin", "Linux"):

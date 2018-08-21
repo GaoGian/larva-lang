@@ -1,0 +1,17 @@
+//无效larva对象
+public class NotLarvaObjectError
+{
+    public String str()
+    {
+        return "";
+    }
+}
+
+//不支持的反射操作
+public class UnsupportedOper
+{
+    public String str()
+    {
+        return "";
+    }
+}

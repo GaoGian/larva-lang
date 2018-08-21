@@ -1,0 +1,28 @@
+package LARVA_NATIVE
+
+//这里定义了各种基础对象到lri的封装
+
+//base定义了公共的一些方法，大部分是对不支持的接口抛异常
+
+type lar_reflect_lri_base struct {
+}
+
+//nil intf
+
+type lar_reflect_lri_nil_intf struct {
+    lar_reflect_lri_base
+}
+
+var lar_reflect_type_str_nil_intf = lar_str_from_go_str("nil")
+
+func (this *lar_reflect_lri_nil_intf) lar_reflect_type_str() *lar_cls_@<<:String>> {
+    return lar_reflect_type_str_nil_intf
+}
+
+func (this *lar_reflect_lri_nil_intf) lar_reflect_zero_value() lar_intf_@<<:Any>> {
+    return nil
+}
+
+func (this *lar_reflect_lri_nil_intf) lar_reflect_value() lar_intf_@<<:Any>> {
+    return nil
+}
