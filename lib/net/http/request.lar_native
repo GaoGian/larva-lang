@@ -22,7 +22,7 @@ func lar_new_obj_lar_cls_@<<_Request>>(method, url *lar_cls_@<<:String>>, data l
         default:
             readable, ok := v.(lar_intf_@<<io.Readable>>)
             if !ok {
-                tp_name := lar_str_to_go_str(lar_func_@<<reflect.type_name>>(data))
+                tp_name := lar_str_to_go_str(lar_new_obj_lar_cls_@<<reflect.Type>>(data).lar_method_str())
                 lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<:ValueError>>(lar_str_from_go_str("无效的data类型：" + tp_name)))
             }
             body = lar_go_func_@<<io.Readable_to_go_ReadCloser>>(readable)
