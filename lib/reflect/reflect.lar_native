@@ -91,3 +91,7 @@ func lar_reflect_gen_lri(a lar_intf_@<<:Any>>, need_zero_value bool) lar_reflect
     }
     return lri
 }
+
+func lar_func_@<<type_str>>(a lar_intf_@<<:Any>>) *lar_cls_@<<:String>> {
+    return lar_reflect_gen_lri(a, false).lar_reflect_type_str()
+}

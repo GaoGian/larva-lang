@@ -24,7 +24,7 @@ public class HashMap<K, V>
     public String repr()
     {
         var sl = new String[this.size() + 2];
-        sl[0] = "<%s {".(new reflect.Type(this));
+        sl[0] = "<%s {".(reflect.type_str(this));
         long i = 1;
         foreach (var p : this.iter())
         {
