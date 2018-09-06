@@ -7,8 +7,6 @@ public native class Type
     public Any zero_value(); //返回此类型的zero_value
 }
 
-public native String type_str(Any a); //返回a的类型的字符串表示，快速版本，不需要new Type对象
-
 //将larva基础类型值或对象封装为一个Value对象
 public native class Value
 {

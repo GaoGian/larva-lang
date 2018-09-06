@@ -371,6 +371,10 @@ def _gen_expr_code_ex(expr):
         e = expr.arg
         return "lar_go_func_any_repr_to_go_str(%s)" % _gen_expr_code(e)
 
+    if expr.op == "to_type_str":
+        e = expr.arg
+        return "lar_go_func_any_to_type_str(%s)" % _gen_expr_code(e)
+
     if expr.op == "call_method":
         e, method, expr_list = expr.arg
         return "(%s).%s(%s)" % (_gen_expr_code(e), _gen_method_name_code(method), _gen_expr_list_code(expr_list))

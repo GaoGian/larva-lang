@@ -723,6 +723,9 @@ class Parser:
                             verb = "s"
                         else:
                             raise Exception("Bug")
+                elif verb == "T":
+                    expr_list[expr_idx - 1] = _Expr("to_type_str", expr, larc_type.STR_TYPE)
+                    verb = "s"
                 else:
                     t.syntax_err("非法的格式符：'%s...'" % `t.value[: pos]`[1 : -1])
                 conv_spec += verb
