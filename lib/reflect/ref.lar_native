@@ -1,0 +1,8 @@
+package LARVA_NATIVE
+
+type lar_cls_@<<Ref>> struct {
+    ptr interface{} //存放一个指针
+}
+
+func (this *lar_cls_@<<Ref>>) lar_method_@<<isArg>>() {
+}

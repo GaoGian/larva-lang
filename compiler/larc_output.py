@@ -698,6 +698,9 @@ def _output_module():
                     code += "var ok bool"
                     code += "*l_%s, ok = l_%s.(%s)" % (cast_ref_name, var_name, _gen_type_name_code(cast_tp))
                     code += "return ok"
+                elif module.name == "reflect" and func.name == "make_ref":
+                    ref_name = func.arg_map.key_at(0)
+                    code += "return &%s{l_%s}" % (_gen_type_name_code_without_star(func.type), ref_name)
                 else:
                     _output_stmt_list(code, func.stmt_list, func, 0, _NEST_LOOP_INVALID, need_check_defer = False)
                     code += "return %s" % _gen_default_value_code(func.type)

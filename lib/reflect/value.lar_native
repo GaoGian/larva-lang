@@ -1,0 +1,25 @@
+package LARVA_NATIVE
+
+type lar_cls_@<<Value>> struct {
+    lri lar_reflect_intf
+}
+
+func lar_new_obj_lar_cls_@<<Value>>(a lar_intf_@<<:Any>>) *lar_cls_@<<Value>> {
+    return &lar_cls_@<<Value>>{
+        lri: lar_reflect_gen_lri(a, false),
+    }
+}
+
+func (this *lar_cls_@<<Value>>) lar_method_@<<isArg>>() {
+}
+
+func (this *lar_cls_@<<Value>>) lar_method_type() *lar_cls_@<<Type>> {
+    //不通过new obj迂回，直接构造比较快
+    return &lar_cls_@<<Type>>{
+        lri: lar_reflect_gen_lri(this.lri.lar_reflect_zero_value(), false),
+    }
+}
+
+func (this *lar_cls_@<<Value>>) lar_method_value() lar_intf_@<<:Any>> {
+    return this.lri.lar_reflect_value()
+}

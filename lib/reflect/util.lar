@@ -1,0 +1,5 @@
+//参数接口，因为参数可以是Value或Ref，用接口抽象出来
+public interface Arg
+{
+    void isArg();
+}

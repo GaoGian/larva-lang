@@ -1,0 +1,45 @@
+package LARVA_NATIVE
+
+//type lar_reflect_intf interface
+//lar_reflect_intf的定义放在__builtin的util.lar_native中，因为比较基础，runtime和__builtins可能需要
+
+//从对象获取lri，reflect的Type和Value其实都是对lri的封装，分别使用lri中的一部分接口，区别在于Type的lri尽量用zero_value，避免引用大对象
+func lar_reflect_gen_lri(a lar_intf_@<<:Any>>, need_zero_value bool) lar_reflect_intf {
+    //基础类型占空间固定，不用考虑need_zero_value
+    switch v := a.(type) {
+    case nil:
+        return &lar_reflect_lri_nil_intf{}
+    case bool:
+        return &lar_reflect_lri_bool{v: v}
+    case int8:
+        return &lar_reflect_lri_schar{v: v}
+    case uint8:
+        return &lar_reflect_lri_char{v: v}
+    case int16:
+        return &lar_reflect_lri_short{v: v}
+    case uint16:
+        return &lar_reflect_lri_ushort{v: v}
+    case int32:
+        return &lar_reflect_lri_int{v: v}
+    case uint32:
+        return &lar_reflect_lri_uint{v: v}
+    case int64:
+        return &lar_reflect_lri_long{v: v}
+    case uint64:
+        return &lar_reflect_lri_ulong{v: v}
+    case float32:
+        return &lar_reflect_lri_float{v: v}
+    case float64:
+        return &lar_reflect_lri_double{v: v}
+    }
+
+    //对象需要根据need_zero_value进行处理
+    lri, ok := a.(lar_reflect_intf)
+    if !ok {
+        lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<NotLarvaObjectError>>())
+    }
+    if need_zero_value {
+        return lri.lar_reflect_zero_value().(lar_reflect_intf) //这里肯定能转成功，不需要判断了
+    }
+    return lri
+}

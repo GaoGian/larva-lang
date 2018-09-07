@@ -1,0 +1,19 @@
+package LARVA_NATIVE
+
+type lar_cls_@<<Type>> struct {
+    lri lar_reflect_intf
+}
+
+func lar_new_obj_lar_cls_@<<Type>>(a lar_intf_@<<:Any>>) *lar_cls_@<<Type>> {
+    return &lar_cls_@<<Type>>{
+        lri: lar_reflect_gen_lri(a, true),
+    }
+}
+
+func (this *lar_cls_@<<Type>>) lar_method_str() *lar_cls_@<<:String>> {
+    return this.lri.lar_reflect_type_str()
+}
+
+func (this *lar_cls_@<<Type>>) lar_method_zero_value() lar_intf_@<<:Any>> {
+    return this.lri.lar_reflect_zero_value()
+}
