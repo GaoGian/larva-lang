@@ -4,7 +4,6 @@
 //函数传参的ref引用封装后的对象
 public native class Ref
 {
-    void isArg(); //实现Arg接口
 }
 
 //将参数的ref形式封装为Ref对象，larva没有直接保存ref的语法，相关泛型代码需要由编译器自己生成

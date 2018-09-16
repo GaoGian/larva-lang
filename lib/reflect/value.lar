@@ -3,8 +3,6 @@ public native class Value
 {
     public Value(Any a);
 
-    void isArg(); //实现Arg接口
-
     public Type type(); //返回此Value的Type
     public Any value(); //返回此Value维持的值
 
@@ -17,5 +15,5 @@ public native class Value
     public void set_attr(String name, Any value); //设置属性值，todo
 
     public String[] method_names(); //返回方法名列表，todo
-    public Value call_method(String name, Arg[] args); //以args为参数调用名为name的方法并返回调用结果，若方法返回类型为void，则返回nil，todo
+    public Value call_method(String name, Any[] args); //以args为参数调用名为name的方法并返回调用结果，若方法返回类型为void，则返回nil，todo
 }

@@ -10,9 +10,6 @@ func lar_new_obj_lar_cls_@<<Value>>(a lar_intf_@<<:Any>>) *lar_cls_@<<Value>> {
     }
 }
 
-func (this *lar_cls_@<<Value>>) lar_method_@<<isArg>>() {
-}
-
 func (this *lar_cls_@<<Value>>) lar_method_type() *lar_cls_@<<Type>> {
     //不通过new obj迂回，直接构造比较快
     return &lar_cls_@<<Type>>{
