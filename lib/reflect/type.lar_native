@@ -17,3 +17,7 @@ func (this *lar_cls_@<<Type>>) lar_method_str() *lar_cls_@<<:String>> {
 func (this *lar_cls_@<<Type>>) lar_method_zero_value() lar_intf_@<<:Any>> {
     return this.lri.lar_reflect_zero_value()
 }
+
+func (this *lar_cls_@<<Type>>) lar_method_new_value(args *lar_arr_lar_intf_@<<:Any>>_1) lar_intf_@<<:Any>> {
+    return this.lri.lar_reflect_new_value(args)
+}

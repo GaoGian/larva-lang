@@ -10,11 +10,17 @@ reflect模块中传入的Any对象若不是larva基础类型或对象，则视�
 type lar_reflect_intf interface {
     lar_reflect_type_str() *lar_cls_@<<String>> //返回类型的字符串表示
     lar_reflect_zero_value() lar_intf_@<<Any>> //返回此类型的zero_value
+    lar_reflect_new_value(args *lar_arr_lar_intf_@<<Any>>_1) lar_intf_@<<Any>> //返回根据args为参数new出的对象，若为基础类型则抛异常
 
     lar_reflect_value() lar_intf_@<<Any>> //返回这个lri的value（对基础类型需要解开值，对象则直接返回自身）
 }
 
+//快捷获取类型名的接口
+func lar_reflect_any_to_type_str(a lar_intf_@<<Any>>) *lar_cls_@<<String>> {
+    return lar_reflect_gen_lri(a, false).lar_reflect_type_str()
+}
+
 //取类型名的直接实现，用于字符串的"%T"格式化
 func lar_go_func_any_to_type_str(a lar_intf_@<<Any>>) string {
-    return lar_str_to_go_str(lar_reflect_gen_lri(a, false).lar_reflect_type_str())
+    return lar_str_to_go_str(lar_reflect_any_to_type_str(a))
 }

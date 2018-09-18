@@ -5,5 +5,5 @@ public native class Type
 
     public String str(); //返回类型的字符串表示
     public Any zero_value(); //返回此类型的zero_value
-    public Any new_value(Any[] args); //返回对此类型执行new操作的结果，即new一个新的值或对象，todo
+    public Any new_value(Any[] args); //返回对此类型执行new操作的结果，即new一个新的对象，需要Type为对象类型
 }

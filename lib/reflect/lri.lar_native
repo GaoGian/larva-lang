@@ -3,8 +3,14 @@ package LARVA_NATIVE
 //这里定义了各种基础对象到lri的封装
 
 //base定义了公共的一些方法，大部分是对不支持的接口抛异常
+//只被基础对象的lri封装结构匿名包含，因为非基础类型的对象可以为nil，调用匿名包含的struct的方法会panic
 
 type lar_reflect_lri_base struct {
+}
+
+func (base *lar_reflect_lri_base) lar_reflect_new_value(args *lar_arr_lar_intf_@<<:Any>>_1) lar_intf_@<<:Any>> {
+    lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<UnsupportedOper>>())
+    panic("unreachable")
 }
 
 //nil intf

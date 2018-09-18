@@ -1,5 +1,11 @@
 package LARVA_NATIVE
 
+import (
+    "reflect"
+    "strings"
+    "fmt"
+)
+
 //type lar_reflect_intf interface
 //lar_reflect_intf的定义放在__builtin的util.lar_native中，因为比较基础，runtime和__builtins可能需要
 
@@ -73,4 +79,113 @@ func lar_reflect_gen_lri(a lar_intf_@<<:Any>>, need_zero_value bool) lar_reflect
         return lri.lar_reflect_zero_value().(lar_reflect_intf) //这里肯定能转成功，不需要判断了
     }
     return lri
+}
+
+//反射中的赋值的目标变量的相关信息
+type lar_reflect_stru_assign_dst struct {
+    ptr      interface{} //被赋值的变量的指针
+    type_str string      //被赋值的变量的类型名，若为函数的ref参数，则前面有‘ref ’
+}
+
+//根据反射赋值规则，将v赋值给dst表示的变量
+func lar_reflect_assign(idx int64, v lar_intf_@<<:Any>>, dst *lar_reflect_stru_assign_dst) {
+    //若目标变量是基础类型，则调用对应的lar_reflect_as_{TYPE}_for_assign函数
+    ok := false
+    is_obj := false
+    switch ptr := dst.ptr.(type) {
+    case *bool:
+        *ptr, ok = lar_reflect_as_bool_for_assign(v)
+    case *int8:
+        *ptr, ok = lar_reflect_as_schar_for_assign(v)
+    case *uint8:
+        *ptr, ok = lar_reflect_as_char_for_assign(v)
+    case *int16:
+        *ptr, ok = lar_reflect_as_short_for_assign(v)
+    case *uint16:
+        *ptr, ok = lar_reflect_as_ushort_for_assign(v)
+    case *int32:
+        *ptr, ok = lar_reflect_as_int_for_assign(v)
+    case *uint32:
+        *ptr, ok = lar_reflect_as_uint_for_assign(v)
+    case *int64:
+        *ptr, ok = lar_reflect_as_long_for_assign(v)
+    case *uint64:
+        *ptr, ok = lar_reflect_as_ulong_for_assign(v)
+    case *float32:
+        *ptr, ok = lar_reflect_as_float_for_assign(v)
+    case *float64:
+        *ptr, ok = lar_reflect_as_double_for_assign(v)
+    default:
+        is_obj = true
+    }
+    if ok {
+        //赋值成功
+        return
+    }
+    if !is_obj {
+        //赋值失败
+        lar_func_@<<:throw>>(
+            lar_new_obj_lar_cls_@<<AssignError>>(int64(idx), lar_reflect_any_to_type_str(v), lar_str_from_go_str(dst.type_str)))
+    }
+
+    //目标变量是对象类型，先看v有没有实现as_default接口，若有则调用，否则用原值
+    //然后用go的reflect对v做convert后赋值
+    //理论上讲，如果目标类型不是larva的类型，这里可能会有问题，不过dst的值都是编译器自己生成的代码初始化的，所以不检查问题也不大
+    v_type_str := lar_go_func_any_to_type_str(v)
+    if as_default_intf, ok := v.(interface {lar_method_as_default() lar_intf_@<<:Any>>}); ok {
+        v = as_default_intf.lar_method_as_default()
+        v_type_str = fmt.Sprintf("[%s.as_default()]%s", v_type_str, lar_go_func_any_to_type_str(v))
+    }
+    v_value := reflect.ValueOf(v)
+    dst_ptr_elem_value := reflect.ValueOf(dst.ptr).Elem()
+    dst_ptr_elem_type := dst_ptr_elem_value.Type()
+    if !v_value.Type().ConvertibleTo(dst_ptr_elem_type) {
+        lar_func_@<<:throw>>(
+            lar_new_obj_lar_cls_@<<AssignError>>(int64(idx), lar_str_from_go_str(v_type_str), lar_str_from_go_str(dst.type_str)))
+    }
+    dst_ptr_elem_value.Set(v_value.Convert(dst_ptr_elem_type))
+}
+
+//将args中的value按反射赋值的规则，赋值给assign_dsts中对应位置的被赋值变量
+func lar_reflect_assign_args(args *lar_arr_lar_intf_@<<:Any>>_1, assign_dsts []lar_reflect_stru_assign_dst) {
+    var args_arr []lar_intf_@<<:Any>>
+    if args != nil {
+        args_arr = args.arr
+    }
+
+    //先检查参数数量是否匹配
+    arg_count := len(args_arr)
+    need_count := len(assign_dsts)
+    if arg_count != need_count {
+        lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<ArgCountError>>(int64(arg_count), int64(need_count)))
+    }
+
+    //逐个进行赋值
+    for idx, v := range args_arr {
+        dst := &assign_dsts[idx]
+        if strings.HasPrefix(dst.type_str, "ref ") {
+            //若dst类型是ref参数，则v必须是一个reflect.Ref类型，需要将v进一步解析，然后严格匹配，必须完全一致
+            ref_v, ok := v.(*lar_cls_@<<Ref>>)
+            if !ok {
+                lar_func_@<<:throw>>(
+                    lar_new_obj_lar_cls_@<<AssignError>>(int64(idx), lar_reflect_any_to_type_str(v), lar_str_from_go_str(dst.type_str)))
+            }
+            v_ptr_value := reflect.ValueOf(ref_v.ptr)
+            dst_ptr_elem_value := reflect.ValueOf(dst.ptr).Elem()
+            if v_ptr_value.Type() != dst_ptr_elem_value.Type() {
+                v_type_str := "ref " + lar_go_func_any_to_type_str(v_ptr_value.Elem().Interface())
+                lar_func_@<<:throw>>(
+                    lar_new_obj_lar_cls_@<<AssignError>>(int64(idx), lar_str_from_go_str(v_type_str), lar_str_from_go_str(dst.type_str)))
+            }
+            dst_ptr_elem_value.Set(v_ptr_value)
+        } else {
+            //若dst类型不是ref参数，则按照反射赋值规则对v分情况进行处理后赋值
+            lar_reflect_assign(int64(idx), v, dst)
+        }
+    }
+}
+
+func lar_reflect_raise_no_such_method(method_name string) {
+    lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<NoSuchMethod>>(lar_str_from_go_str(method_name)))
+    panic("unreachable")
 }

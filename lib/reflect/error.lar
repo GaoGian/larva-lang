@@ -1,17 +1,64 @@
 //无效larva对象
 public class NotLarvaObjectError
 {
-    public String str()
-    {
-        return "";
-    }
+    EmptyException e usemethod;
 }
 
 //不支持的反射操作
 public class UnsupportedOper
 {
-    public String str()
+    public UnsupportedOper()
     {
-        return "";
     }
+
+    EmptyException e usemethod;
+}
+
+//找不到属性
+public class NoSuchAttr
+{
+    public NoSuchAttr(String name)
+    {
+        this.e = new Exception(name);
+    }
+
+    Exception e usemethod;
+}
+
+//找不到方法
+public class NoSuchMethod
+{
+    public NoSuchMethod(String name)
+    {
+        this.e = new Exception(name);
+    }
+
+    Exception e usemethod;
+}
+
+//参数数量错误，用于反射调用方法时检查
+public class ArgCountError
+{
+    public ArgCountError(long src_count, long dst_count)
+    {
+        this.e = new Exception("%s -> %s".(src_count, dst_count));
+    }
+
+    Exception e usemethod;
+}
+
+//赋值错误，用于设置属性值和参数赋值等，arg_idx为负表示不是参数列表的匹配，否则表示在参数列表中的下标
+public class AssignError
+{
+    public AssignError(long arg_idx, String src_type_str, String dst_type_str)
+    {
+        var arg_info = "";
+        if (arg_idx >= 0)
+        {
+            arg_info = "参数#%d：".(arg_idx + 1);
+        }
+        this.e = new Exception("%s%s -> %s".(arg_info, src_type_str, dst_type_str));
+    }
+
+    Exception e usemethod;
 }
