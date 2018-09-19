@@ -642,7 +642,7 @@ def _output_module():
             code += "var lar_reflect_type_str_%s = lar_str_from_go_str(%s)" % (lar_cls_name, _gen_str_literal(str(cls)))
             with code.new_blk("func (this *%s) lar_reflect_type_str() %s" % (lar_cls_name, _gen_type_name_code(larc_type.STR_TYPE))):
                 code += "return lar_reflect_type_str_%s" % lar_cls_name
-            with code.new_blk("func (this *%s) lar_reflect_zero_value() %s" % (lar_cls_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+            with code.new_blk("func (this *%s) lar_reflect_zero_value() %s" % (lar_cls_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return (*%s)(nil)" % lar_cls_name
             def output_lra_def(code, arg_map):
                 for arg_name, arg_tp in arg_map.iteritems():
@@ -653,8 +653,7 @@ def _output_module():
                     dst_code_list.append('{&lra_%s, "%s%s"}' % (arg_name, "ref " if arg_tp.is_ref else "", str(arg_tp)))
                 return "[]lar_reflect_stru_assign_dst{%s}" % ", ".join(dst_code_list)
             with code.new_blk("func (this *%s) lar_reflect_new_value(args %s) %s" %
-                              (lar_cls_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE.to_array_type(1)),
-                               _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                              (lar_cls_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE.to_array_type(1)), _ANY_INTF_TYPE_NAME_CODE)):
                 if "public" in cls.construct_method.decr_set:
                     output_lra_def(code, cls.construct_method.arg_map)
                     code += "lar_reflect_assign_args(args, %s)" % gen_assign_dsts(cls.construct_method.arg_map)
@@ -663,7 +662,7 @@ def _output_module():
                 else:
                     code += "lar_reflect_raise_no_such_method(%s)" % (_gen_str_literal(cls.construct_method.name))
                     code += 'panic("unreachable")'
-            with code.new_blk("func (this *%s) lar_reflect_value() %s" % (lar_cls_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+            with code.new_blk("func (this *%s) lar_reflect_value() %s" % (lar_cls_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return this"
         for cls in [i for i in module.cls_map.itervalues() if not i.gtp_name_list] + list(module.gcls_inst_map.itervalues()):
             lar_cls_name = _gen_coi_name(cls)
@@ -816,15 +815,14 @@ def _output_util():
             code += "var lar_reflect_type_str_%s = lar_str_from_go_str(%s)" % (arr_tp_name, _gen_str_literal(str(tp) + "[]" * dim_count))
             with code.new_blk("func (la *%s) lar_reflect_type_str() %s" % (arr_tp_name, _gen_type_name_code(larc_type.STR_TYPE))):
                 code += "return lar_reflect_type_str_%s" % arr_tp_name
-            with code.new_blk("func (la *%s) lar_reflect_zero_value() %s" % (arr_tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+            with code.new_blk("func (la *%s) lar_reflect_zero_value() %s" % (arr_tp_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return (*%s)(nil)" % arr_tp_name
             with code.new_blk("func (la *%s) lar_reflect_new_value(args %s) %s" %
-                              (arr_tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE.to_array_type(1)),
-                               _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+                              (arr_tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE.to_array_type(1)), _ANY_INTF_TYPE_NAME_CODE)):
                 code += "var sz int64"
                 code += 'lar_reflect_assign_args(args, []lar_reflect_stru_assign_dst{{&sz, "long"}})'
                 code += "return %s(sz)" % _gen_new_arr_func_name_by_tp_name(tp_name, dim_count, 1)
-            with code.new_blk("func (la *%s) lar_reflect_value() %s" % (arr_tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+            with code.new_blk("func (la *%s) lar_reflect_value() %s" % (arr_tp_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return la"
             #new数组的函数
             for new_dim_count in xrange(1, dim_count + 1):
@@ -872,17 +870,14 @@ def _output_util():
             code += 'var lar_reflect_type_str_%s = lar_str_from_go_str("%s")' % (tp_name, tp_name)
             with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_type_str() %s" % (tp_name, _gen_type_name_code(larc_type.STR_TYPE))):
                 code += "return lar_reflect_type_str_%s" % tp_name
-            with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_zero_value() %s" %
-                              (tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+            with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_zero_value() %s" % (tp_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return %s(%s)" % (go_tp_name, "false" if tp_name == "bool" else "0")
-            with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_value() %s" %
-                              (tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
+            with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_value() %s" % (tp_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return this.v"
 
         #基础类型的lar_reflect_as_XXX_for_assign函数和尝试反射赋值给基础类型的函数
         for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():
-            with code.new_blk("func lar_reflect_as_%s_for_assign(a %s) (ret %s, ok bool)" %
-                              (tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE), go_tp_name)):
+            with code.new_blk("func lar_reflect_as_%s_for_assign(a %s) (ret %s, ok bool)" % (tp_name, _ANY_INTF_TYPE_NAME_CODE, go_tp_name)):
                 #若a就是需要的类型，则直接返回
                 with code.new_blk("if v, ok := a.(%s); ok" % go_tp_name):
                     code += "return v, true"
@@ -890,13 +885,13 @@ def _output_util():
                 with code.new_blk("if v, ok := a.(interface {lar_method_as_%s() %s}); ok" % (tp_name, go_tp_name)):
                     code += "return v.lar_method_as_%s(), true" % tp_name
                 #若实现了as_default方法且返回值为需要的类型，则返回此值
-                with code.new_blk("if v, ok := a.(interface {lar_method_as_default() %s}); ok" % _gen_type_name_code(larc_type.ANY_INTF_TYPE)):
+                with code.new_blk("if v, ok := a.(interface {lar_method_as_default() %s}); ok" % _ANY_INTF_TYPE_NAME_CODE):
                     with code.new_blk("if default_v, ok := v.lar_method_as_default().(%s); ok" % go_tp_name):
                         code += "return default_v, true"
                 code += "ok = false"
                 code += "return"
         with code.new_blk("func lar_reflect_try_assign_to_base_type(a %s, dst *lar_reflect_stru_assign_dst) (ok bool, is_obj bool)" %
-                          _gen_type_name_code(larc_type.ANY_INTF_TYPE)):
+                          _ANY_INTF_TYPE_NAME_CODE):
             with code.new_blk("switch ptr := dst.ptr.(type)"):
                 for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():
                     code += "case *%s:" % go_tp_name
@@ -932,8 +927,13 @@ def _run_prog(args_for_run):
     else:
         larc_common.exit("找不到可执行文件[%s]" % _exe_file)
 
+_ANY_INTF_TYPE_NAME_CODE = None
+
 def output(need_run_prog, args_for_run):
-    global runtime_dir, _out_prog_dir, _prog_module_name, _prog_name, _exe_file, _main_pkg_file, _curr_module
+    global _ANY_INTF_TYPE_NAME_CODE
+    _ANY_INTF_TYPE_NAME_CODE = _gen_type_name_code(larc_type.ANY_INTF_TYPE)
+
+    global _out_prog_dir, _prog_module_name, _prog_name, _exe_file, _main_pkg_file, _curr_module
 
     _out_prog_dir = "%s/src/lar_prog_%s" % (out_dir, _gen_module_name_code(larc_module.module_map[main_module_name]))
 
