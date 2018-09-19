@@ -879,7 +879,7 @@ def _output_util():
                               (tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE))):
                 code += "return this.v"
 
-        #基础类型的lar_reflect_as_XXX_for_assign函数
+        #基础类型的lar_reflect_as_XXX_for_assign函数和尝试反射赋值给基础类型的函数
         for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():
             with code.new_blk("func lar_reflect_as_%s_for_assign(a %s) (ret %s, ok bool)" %
                               (tp_name, _gen_type_name_code(larc_type.ANY_INTF_TYPE), go_tp_name)):
@@ -895,6 +895,15 @@ def _output_util():
                         code += "return default_v, true"
                 code += "ok = false"
                 code += "return"
+        with code.new_blk("func lar_reflect_try_assign_to_base_type(a %s, dst *lar_reflect_stru_assign_dst) (ok bool, is_obj bool)" %
+                          _gen_type_name_code(larc_type.ANY_INTF_TYPE)):
+            with code.new_blk("switch ptr := dst.ptr.(type)"):
+                for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():
+                    code += "case *%s:" % go_tp_name
+                    code += "*ptr, ok = lar_reflect_as_%s_for_assign(a)" % tp_name
+                code += "default:"
+                code += "is_obj = true"
+            code += "return"
 
 def _make_prog():
     if platform.system() in ("Darwin", "Linux"):
