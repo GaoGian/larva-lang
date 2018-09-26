@@ -718,7 +718,9 @@ def _output_module():
                     code += "return ok"
                 elif module.name == "reflect" and func.name == "make_ref":
                     ref_name = func.arg_map.key_at(0)
-                    code += "return &%s{l_%s}" % (_gen_type_name_code_without_star(func.type), ref_name)
+                    ref_tp = func.arg_map.value_at(0)
+                    code += ("return &%s{ptr: l_%s, type_str: %s}" %
+                             (_gen_type_name_code_without_star(func.type), ref_name, _gen_str_literal(str(ref_tp))))
                 else:
                     _output_stmt_list(code, func.stmt_list, func, 0, _NEST_LOOP_INVALID, need_check_defer = False)
                     code += "return %s" % _gen_default_value_code(func.type)

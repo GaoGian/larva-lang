@@ -1,5 +1,16 @@
 package LARVA_NATIVE
 
-type lar_cls_@<<Ref>> struct {
-    ptr interface{} //存放一个指针
+import (
+    "reflect"
+)
+
+type lar_cls_@<<Ref>> lar_reflect_stru_assign_dst //直接用assign_dst的结构，但是属于两个独立类型
+
+func (this *lar_cls_@<<Ref>>) lar_method_get() lar_intf_@<<:Any>> {
+    return reflect.ValueOf(this.ptr).Elem().Interface()
+}
+
+func (this *lar_cls_@<<Ref>>) lar_method_set(a lar_intf_@<<:Any>>) {
+    assign_dst := lar_reflect_stru_assign_dst(*this)
+    lar_reflect_assign(-1, a, &assign_dst)
 }
