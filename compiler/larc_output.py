@@ -861,7 +861,7 @@ def _output_util():
             for out_nfn, in_nfn in _native_file_name_map.iteritems():
                 code += "%s: %s," % (_gen_str_literal(out_nfn), _gen_str_literal(in_nfn))
 
-        #基础类型（除nil interface外）的lri
+        #基础类型（除nil interface外）的lri，以及构建基础类型的lri的函数
         for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():
             with code.new_blk("type lar_reflect_lri_%s struct" % tp_name):
                 code += "lar_reflect_lri_base"
@@ -874,6 +874,20 @@ def _output_util():
                 code += "return %s(%s)" % (go_tp_name, "false" if tp_name == "bool" else "0")
             with code.new_blk("func (this *lar_reflect_lri_%s) lar_reflect_value() %s" % (tp_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return this.v"
+        with code.new_blk("func lar_reflect_try_gen_base_type_lri(a %s, need_zero_value bool) (lri lar_reflect_intf, ok bool)" %
+                          _ANY_INTF_TYPE_NAME_CODE):
+            code += "ok = true"
+            with code.new_blk("switch v := a.(type)"):
+                code += "case nil:"
+                code += "lri = &lar_reflect_lri_nil_intf{}"
+                for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():
+                    code += "case %s:" % go_tp_name
+                    with code.new_blk("if need_zero_value", start_with_blank_line = False):
+                        code += "v = %s" % ("false" if go_tp_name == "bool" else "0")
+                    code += "lri = &lar_reflect_lri_%s{v: v}" % tp_name
+                code += "default:"
+                code += "ok = false"
+            code += "return"
 
         #基础类型的lar_reflect_as_XXX_for_assign函数和尝试反射赋值给基础类型的函数
         for tp_name, go_tp_name in _BASE_TYPE_NAME_MAP.iteritems():

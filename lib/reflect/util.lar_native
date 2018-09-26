@@ -10,67 +10,12 @@ import (
 
 //从对象获取lri，reflect的Type和Value其实都是对lri的封装，分别使用lri中的一部分接口，区别在于Type的lri尽量用zero_value，避免引用大对象
 func lar_reflect_gen_lri(a lar_intf_@<<:Any>>, need_zero_value bool) lar_reflect_intf {
-    switch v := a.(type) {
-    case nil:
-        return &lar_reflect_lri_nil_intf{}
-    case bool:
-        if need_zero_value {
-            v = false
-        }
-        return &lar_reflect_lri_bool{v: v}
-    case int8:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_schar{v: v}
-    case uint8:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_char{v: v}
-    case int16:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_short{v: v}
-    case uint16:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_ushort{v: v}
-    case int32:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_int{v: v}
-    case uint32:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_uint{v: v}
-    case int64:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_long{v: v}
-    case uint64:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_ulong{v: v}
-    case float32:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_float{v: v}
-    case float64:
-        if need_zero_value {
-            v = 0
-        }
-        return &lar_reflect_lri_double{v: v}
+    lri, ok := lar_reflect_try_gen_base_type_lri(a, need_zero_value)
+    if ok {
+        return lri
     }
 
-    lri, ok := a.(lar_reflect_intf)
+    lri, ok = a.(lar_reflect_intf)
     if !ok {
         lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<NotLarvaObjectError>>())
     }
