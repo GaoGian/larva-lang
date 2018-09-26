@@ -21,3 +21,17 @@ func (this *lar_cls_@<<Type>>) lar_method_zero_value() lar_intf_@<<:Any>> {
 func (this *lar_cls_@<<Type>>) lar_method_new_value(args *lar_arr_lar_intf_@<<:Any>>_1) lar_intf_@<<:Any>> {
     return this.lri.lar_reflect_new_value(args)
 }
+
+//---------------------------------------------------------------------------------------
+
+type lar_cls_@<<AttrTagMap>> struct {
+    m map[string]string
+}
+
+func (this *lar_cls_@<<AttrTagMap>>) lar_method_get(tag_name *lar_cls_@<<:String>>) *lar_cls_@<<:String>> {
+    tag, ok := this.m[lar_str_to_go_str(tag_name)]
+    if ok {
+        return lar_str_from_go_str(tag)
+    }
+    return nil
+}

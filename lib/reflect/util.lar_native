@@ -111,7 +111,7 @@ func lar_reflect_assign_args(args *lar_arr_lar_intf_@<<:Any>>_1, assign_dsts []l
     }
 }
 
-func lar_reflect_raise_no_such_method(method_name string) {
-    lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<NoSuchMethod>>(lar_str_from_go_str(method_name)))
+func lar_reflect_raise_no_such_method(idx int64, method_name *lar_cls_@<<:String>>) {
+    lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<NoSuchMethod>>(idx, method_name))
     panic("unreachable")
 }

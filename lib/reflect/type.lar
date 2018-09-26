@@ -4,6 +4,64 @@ public native class Type
     public Type(Any a);
 
     public String str(); //返回类型的字符串表示
+
     public Any zero_value(); //返回此类型的zero_value
     public Any new_value(Any[] args); //返回对此类型执行new操作的结果，即new一个新的对象，需要Type为对象类型
+
+    public bool is_array(); //返回类型是否为一个数组，todo
+    public bool is_obj(); //返回类型是否为对象类型，如果是基础类型则返回false，todo
+
+    public long attr_count(); //返回属性数量，todo
+    public AttrInfo attr_at(long idx); //返回指定索引的属性信息，idx越界则返回nil，todo
+    public AttrInfo attr_by_name(String attr_name); //返回指定名字的属性信息，找不到则返回nil，todo
+
+    public long method_count(); //返回方法数量，todo
+    public MethodInfo method_at(long idx); //返回指定索引的方法信息，idx越界则返回nil，todo
+    public MethodInfo method_by_name(String attr_name); //返回指定名字的方法信息，找不到则返回nil，todo
+}
+
+//AttrInfo类，存储某Type的某属性信息
+public class AttrInfo
+{
+    public String str()
+    {
+        return "%s.%s".(this.of_type, this._name);
+    }
+
+    public String name()
+    {
+        return this._name;
+    }
+
+    public String tag(String tag_name)
+    {
+        return this.tag_map.get(tag_name);
+    }
+
+    Type       of_type; //所属的类型
+    String     _name;   //属性名
+    AttrTagMap tag_map; //属性的tag信息
+}
+
+//AttrTagMap类，存储tag信息
+native class AttrTagMap
+{
+    public String get(String tag_name); //获取tag的值
+}
+
+//MethodInfo类，存储某Type的某方法信息
+public class MethodInfo
+{
+    public String str()
+    {
+        return "%s.%s".(this.of_type, this._name);
+    }
+
+    public String name()
+    {
+        return this._name;
+    }
+
+    Type   of_type; //所属的类型
+    String _name;   //方法名
 }

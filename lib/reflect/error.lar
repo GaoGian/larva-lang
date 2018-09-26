@@ -17,8 +17,13 @@ public class UnsupportedOper
 //找不到属性
 public class NoSuchAttr
 {
-    public NoSuchAttr(String name)
+    public NoSuchAttr(long idx, String name)
     {
+        if (name == nil)
+        {
+            //按idx没找到
+            name = "属性#%d".(idx);
+        }
         this.e = new Exception(name);
     }
 
@@ -28,8 +33,13 @@ public class NoSuchAttr
 //找不到方法
 public class NoSuchMethod
 {
-    public NoSuchMethod(String name)
+    public NoSuchMethod(long idx, String name)
     {
+        if (name == nil)
+        {
+            //按idx没找到
+            name = "方法#%d".(idx);
+        }
         this.e = new Exception(name);
     }
 

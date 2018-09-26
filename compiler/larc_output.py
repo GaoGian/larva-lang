@@ -660,7 +660,7 @@ def _output_module():
                     code += ("return lar_new_obj_%s(%s)" %
                             (lar_cls_name, ", ".join(["lra_" + arg_name for arg_name in cls.construct_method.arg_map])))
                 else:
-                    code += "lar_reflect_raise_no_such_method(%s)" % (_gen_str_literal(cls.construct_method.name))
+                    code += "lar_reflect_raise_no_such_method(0, lar_str_from_go_str(%s))" % (_gen_str_literal(cls.construct_method.name))
                     code += 'panic("unreachable")'
             with code.new_blk("func (this *%s) lar_reflect_value() %s" % (lar_cls_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return this"

@@ -6,14 +6,13 @@ public native class Value
     public Type type(); //返回此Value的Type
     public Any value(); //返回此Value维持的值
 
-    public bool is_array(); //返回此Value是否引用一个数组，todo
-    public bool is_obj(); //返回此Value是否引用一个对象，如果是基础类型则返回false，todo
-    public bool is_nil(); //当is_obj为true且为对象的nil引用时返回true，否则返回false，todo
+    public bool is_nil(); //当类型的is_obj为true且为对象的nil引用时返回true，否则返回false，todo
 
-    public String[] attr_names(); //返回属性名列表，todo
-    public Any get_attr(String name); //获取属性值，todo
-    public void set_attr(String name, Any value); //设置属性值，todo
+    //返回指定索引或名字的属性的引用，idx越界或找不到则抛NoSuchAttr异常，todo
+    public Ref attr_at(long idx);
+    public Ref attr_by_name(String attr_name);
 
-    public String[] method_names(); //返回方法名列表，todo
-    public Value call_method(String name, Any[] args); //以args为参数调用名为name的方法并返回调用结果，若方法返回类型为void，则返回nil，todo
+    //以args为参数调用指定索引或名字的方法并返回调用结果，idx越界或找不到则抛NoSuchMethod异常，若方法返回类型为void，则返回nil，todo
+    public Value call_method_at(long idx, Any[] args);
+    public Value call_method_by_name(String name, Any[] args);
 }
