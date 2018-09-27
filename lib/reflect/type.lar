@@ -8,8 +8,8 @@ public native class Type
     public Any zero_value(); //返回此类型的zero_value
     public Any new_value(Any[] args); //返回对此类型执行new操作的结果，即new一个新的对象，需要Type为对象类型
 
-    public bool is_array(); //返回类型是否为一个数组，todo
-    public bool is_obj(); //返回类型是否为对象类型，如果是基础类型则返回false，todo
+    public bool is_array(); //返回类型是否为一个数组
+    public bool is_obj(); //返回类型是否为对象类型，如果是基础类型则返回false
 
     public long attr_count(); //返回属性数量，todo
     public AttrInfo attr_at(long idx); //返回指定索引的属性信息，idx越界则返回nil，todo

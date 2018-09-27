@@ -6,7 +6,7 @@ public native class Value
     public Type type(); //返回此Value的Type
     public Any value(); //返回此Value维持的值
 
-    public bool is_nil(); //当类型的is_obj为true且为对象的nil引用时返回true，否则返回false，todo
+    public bool is_nil(); //当类型的is_obj为true且为对象的nil引用时返回true，否则返回false
 
     //返回指定索引或名字的属性的引用，idx越界或找不到则抛NoSuchAttr异常，todo
     public Ref attr_at(long idx);

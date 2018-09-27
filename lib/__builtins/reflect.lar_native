@@ -11,8 +11,11 @@ type lar_reflect_intf interface {
     lar_reflect_type_str() *lar_cls_@<<String>> //返回类型的字符串表示
     lar_reflect_zero_value() lar_intf_@<<Any>> //返回此类型的zero_value
     lar_reflect_new_value(args *lar_arr_lar_intf_@<<Any>>_1) lar_intf_@<<Any>> //返回根据args为参数new出的对象，若为基础类型则抛异常
+    lar_reflect_is_array() bool //是否为数组类型
+    lar_reflect_is_obj() bool //是否为对象类型，即数组类型和class
 
     lar_reflect_value() lar_intf_@<<Any>> //返回这个lri的value（对基础类型需要解开值，对象则直接返回自身）
+    lar_reflect_is_nil() bool //是否为对象类型的nil值
 }
 
 //快捷获取类型名的接口

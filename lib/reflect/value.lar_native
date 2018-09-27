@@ -20,3 +20,7 @@ func (this *lar_cls_@<<Value>>) lar_method_type() *lar_cls_@<<Type>> {
 func (this *lar_cls_@<<Value>>) lar_method_value() lar_intf_@<<:Any>> {
     return this.lri.lar_reflect_value()
 }
+
+func (this *lar_cls_@<<Value>>) lar_method_is_nil() bool {
+    return this.lri.lar_reflect_is_nil()
+}

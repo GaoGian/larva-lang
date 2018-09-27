@@ -22,16 +22,20 @@ func (this *lar_cls_@<<Type>>) lar_method_new_value(args *lar_arr_lar_intf_@<<:A
     return this.lri.lar_reflect_new_value(args)
 }
 
+func (this *lar_cls_@<<Type>>) lar_method_is_array() bool {
+    return this.lri.lar_reflect_is_array()
+}
+
+func (this *lar_cls_@<<Type>>) lar_method_is_obj() bool {
+    return this.lri.lar_reflect_is_obj()
+}
+
 //---------------------------------------------------------------------------------------
 
 type lar_cls_@<<AttrTagMap>> struct {
-    m map[string]string
+    m map[string]*lar_cls_@<<:String>>
 }
 
 func (this *lar_cls_@<<AttrTagMap>>) lar_method_get(tag_name *lar_cls_@<<:String>>) *lar_cls_@<<:String>> {
-    tag, ok := this.m[lar_str_to_go_str(tag_name)]
-    if ok {
-        return lar_str_from_go_str(tag)
-    }
-    return nil
+    return this.m[lar_str_to_go_str(tag_name)]
 }

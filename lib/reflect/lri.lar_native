@@ -13,6 +13,20 @@ func (base *lar_reflect_lri_base) lar_reflect_new_value(args *lar_arr_lar_intf_@
     panic("unreachable")
 }
 
+func (base *lar_reflect_lri_base) lar_reflect_is_array() bool {
+    return false
+}
+
+func (base *lar_reflect_lri_base) lar_reflect_is_obj() bool {
+    return false
+}
+
+func (base *lar_reflect_lri_base) lar_reflect_is_nil() bool {
+    return false
+}
+
+//----------------------------------------------------------------------
+
 //nil intf
 
 type lar_reflect_lri_nil_intf struct {

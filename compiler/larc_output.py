@@ -662,8 +662,14 @@ def _output_module():
                 else:
                     code += "lar_reflect_raise_no_such_method(0, lar_str_from_go_str(%s))" % (_gen_str_literal(cls.construct_method.name))
                     code += 'panic("unreachable")'
+            with code.new_blk("func (this *%s) lar_reflect_is_array() bool" % lar_cls_name):
+                code += "return false"
+            with code.new_blk("func (this *%s) lar_reflect_is_obj() bool" % lar_cls_name):
+                code += "return true"
             with code.new_blk("func (this *%s) lar_reflect_value() %s" % (lar_cls_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return this"
+            with code.new_blk("func (this *%s) lar_reflect_is_nil() bool" % lar_cls_name):
+                code += "return this == nil"
         for cls in [i for i in module.cls_map.itervalues() if not i.gtp_name_list] + list(module.gcls_inst_map.itervalues()):
             lar_cls_name = _gen_coi_name(cls)
             output_reflect_method(code)
@@ -824,8 +830,14 @@ def _output_util():
                 code += "var sz int64"
                 code += 'lar_reflect_assign_args(args, []lar_reflect_stru_assign_dst{{&sz, "long"}})'
                 code += "return %s(sz)" % _gen_new_arr_func_name_by_tp_name(tp_name, dim_count, 1)
+            with code.new_blk("func (la *%s) lar_reflect_is_array() bool" % arr_tp_name):
+                code += "return true"
+            with code.new_blk("func (la *%s) lar_reflect_is_obj() bool" % arr_tp_name):
+                code += "return true"
             with code.new_blk("func (la *%s) lar_reflect_value() %s" % (arr_tp_name, _ANY_INTF_TYPE_NAME_CODE)):
                 code += "return la"
+            with code.new_blk("func (la *%s) lar_reflect_is_nil() bool" % arr_tp_name):
+                code += "return la == nil"
             #new数组的函数
             for new_dim_count in xrange(1, dim_count + 1):
                 new_arr_func_name = _gen_new_arr_func_name_by_tp_name(tp_name, dim_count, new_dim_count)
