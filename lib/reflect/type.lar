@@ -11,13 +11,13 @@ public native class Type
     public bool is_array(); //返回类型是否为一个数组
     public bool is_obj(); //返回类型是否为对象类型，如果是基础类型则返回false
 
-    public long attr_count(); //返回属性数量，todo
-    public AttrInfo attr_at(long idx); //返回指定索引的属性信息，idx越界则返回nil，todo
-    public AttrInfo attr_by_name(String attr_name); //返回指定名字的属性信息，找不到则返回nil，todo
+    public long attr_count(); //返回属性数量
+    public long attr_idx_by_name(String name); //返回指定名字的属性索引，找不到则返回-1
+    public AttrInfo attr_at(long idx); //返回指定索引的属性信息，idx越界则返回nil
 
     public long method_count(); //返回方法数量，todo
+    public long method_idx_by_name(String name); //返回指定名字的方法索引，找不到则返回-1，todo
     public MethodInfo method_at(long idx); //返回指定索引的方法信息，idx越界则返回nil，todo
-    public MethodInfo method_by_name(String attr_name); //返回指定名字的方法信息，找不到则返回nil，todo
 }
 
 //AttrInfo类，存储某Type的某属性信息

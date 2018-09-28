@@ -13,9 +13,13 @@ type lar_reflect_intf interface {
     lar_reflect_new_value(args *lar_arr_lar_intf_@<<Any>>_1) lar_intf_@<<Any>> //返回根据args为参数new出的对象，若为基础类型则抛异常
     lar_reflect_is_array() bool //是否为数组类型
     lar_reflect_is_obj() bool //是否为对象类型，即数组类型和class
+    lar_reflect_attr_count() int64 //属性数量
+    lar_reflect_attr_idx_by_name(name *lar_cls_@<<String>>) int64 //根据属性名返回其索引，不存在则返回-1
+    lar_reflect_attr_at(idx int64) (string, map[string]*lar_cls_@<<String>>) //返回对应索引的属性信息
 
     lar_reflect_value() lar_intf_@<<Any>> //返回这个lri的value（对基础类型需要解开值，对象则直接返回自身）
     lar_reflect_is_nil() bool //是否为对象类型的nil值
+    lar_reflect_attr_ref_at(idx int64) (interface{}, string) //返回对应索引的属性的指针和类型描述，若无此属性则抛reflect.NoSuchAttr
 }
 
 //快捷获取类型名的接口

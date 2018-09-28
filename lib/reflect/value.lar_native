@@ -24,3 +24,22 @@ func (this *lar_cls_@<<Value>>) lar_method_value() lar_intf_@<<:Any>> {
 func (this *lar_cls_@<<Value>>) lar_method_is_nil() bool {
     return this.lri.lar_reflect_is_nil()
 }
+
+func (this *lar_cls_@<<Value>>) lar_method_attr_at(idx int64) *lar_cls_@<<Ref>> {
+    ptr, type_str := this.lri.lar_reflect_attr_ref_at(idx)
+    if ptr == nil {
+        lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<NoSuchAttr>>(idx, nil))
+    }
+    return &lar_cls_@<<Ref>>{
+        ptr:      ptr,
+        type_str: type_str,
+    }
+}
+
+func (this *lar_cls_@<<Value>>) lar_method_attr_by_name(name *lar_cls_@<<:String>>) *lar_cls_@<<Ref>> {
+    idx := this.lri.lar_reflect_attr_idx_by_name(name)
+    if idx < 0 {
+        lar_func_@<<:throw>>(lar_new_obj_lar_cls_@<<NoSuchAttr>>(idx, name))
+    }
+    return this.lar_method_attr_at(idx)
+}

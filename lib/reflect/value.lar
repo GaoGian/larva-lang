@@ -8,9 +8,9 @@ public native class Value
 
     public bool is_nil(); //当类型的is_obj为true且为对象的nil引用时返回true，否则返回false
 
-    //返回指定索引或名字的属性的引用，idx越界或找不到则抛NoSuchAttr异常，todo
+    //返回指定索引或名字的属性的引用，idx越界或找不到则抛NoSuchAttr异常
     public Ref attr_at(long idx);
-    public Ref attr_by_name(String attr_name);
+    public Ref attr_by_name(String name);
 
     //以args为参数调用指定索引或名字的方法并返回调用结果，idx越界或找不到则抛NoSuchMethod异常，若方法返回类型为void，则返回nil，todo
     public Value call_method_at(long idx, Any[] args);

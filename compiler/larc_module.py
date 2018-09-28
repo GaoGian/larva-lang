@@ -344,6 +344,7 @@ class _Attr:
         self.type = type
         self.name = name
         self.usemethod_list = usemethod_list
+        self.tag_map = {}
 
     __repr__ = __str__ = lambda self : "%s.%s" % (self.cls, self.name)
 
@@ -557,6 +558,7 @@ class _GclsInstAttr:
         self.type = copy.deepcopy(attr.type)
         self.name = attr.name
         self.usemethod_list = attr.usemethod_list
+        self.tag_map = attr.tag_map
 
     __repr__ = __str__ = lambda self : "%s.%s" % (self.cls, self.attr.name)
 

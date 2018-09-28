@@ -30,6 +30,28 @@ func (this *lar_cls_@<<Type>>) lar_method_is_obj() bool {
     return this.lri.lar_reflect_is_obj()
 }
 
+func (this *lar_cls_@<<Type>>) lar_method_attr_count() int64 {
+    return this.lri.lar_reflect_attr_count()
+}
+
+func (this *lar_cls_@<<Type>>) lar_method_attr_idx_by_name(name *lar_cls_@<<:String>>) int64 {
+    return this.lri.lar_reflect_attr_idx_by_name(name)
+}
+
+func (this *lar_cls_@<<Type>>) lar_method_attr_at(idx int64) *lar_cls_@<<AttrInfo>> {
+    name, tag_map := this.lri.lar_reflect_attr_at(idx)
+    if name == "" {
+        return nil
+    }
+    return &lar_cls_@<<AttrInfo>>{
+        m_of_type: this,
+        m__name:   lar_str_from_go_str(name),
+        m_tag_map: &lar_cls_@<<AttrTagMap>>{
+            m: tag_map,
+        },
+    }
+}
+
 //---------------------------------------------------------------------------------------
 
 type lar_cls_@<<AttrTagMap>> struct {

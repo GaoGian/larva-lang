@@ -22,7 +22,7 @@ public class NoSuchAttr
         if (name == nil)
         {
             //按idx没找到
-            name = "属性#%d".(idx);
+            name = "属性#%d".(idx + 1);
         }
         this.e = new Exception(name);
     }
@@ -38,7 +38,7 @@ public class NoSuchMethod
         if (name == nil)
         {
             //按idx没找到
-            name = "方法#%d".(idx);
+            name = "方法#%d".(idx + 1);
         }
         this.e = new Exception(name);
     }
